@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manage Data</title>
+
+<style>
+/* KEEP YOUR SAME CSS — just reuse it */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #f5f0ff 0%, #f0e6ff 50%, #e6e0ff 100%);
+      color: #2d1a4a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .nav-bar {
+      width: 100%;
+      background: rgba(245, 240, 255, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 1rem 0;
+      box-shadow: 0 4px 20px rgba(123, 44, 191, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(199, 125, 255, 0.15);
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      gap: 1.8rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.85rem 1.8rem;
+      background: rgba(255, 255, 255, 0.35);
+      color: #4a3a5c;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(199, 125, 255, 0.25);
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.6);
+      color: #7b2cbf;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(123, 44, 191, 0.15);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(90deg, #9d4edd, #c77dff);
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 4px 18px rgba(123, 44, 191, 0.3);
+      border: none;
+    }
+
+    .title-block {
+      width: 100%;
+      background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 40%, #c77dff 80%, #e0aaff 100%);
+      padding: 4rem 1rem 3rem;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(123, 44, 191, 0.28);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .title-block::before {
+      content: "🥳   🎉   ✨   🥳   🎈";
+      position: absolute;
+      font-size: 7rem;
+      opacity: 0.12;
+      top: -4rem;
+      left: -4rem;
+      transform: rotate(-10deg);
+      letter-spacing: 3rem;
+      white-space: nowrap;
+    }
+
+    .title-block h1 {
+      margin: 0;
+      font-size: 3.6rem;
+      color: white;
+      font-weight: 800;
+      letter-spacing: -1px;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.35);
+    }
+
+    .datetime {
+      margin-top: 1.4rem;
+      font-size: 1.55rem;
+      color: #f0e6ff;
+      font-weight: 600;
+      background: rgba(0,0,0,0.22);
+      display: inline-block;
+      padding: 0.65rem 1.8rem;
+      border-radius: 50px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.28);
+    }
+
+    .details-container {
+      margin: 3.5rem auto 2rem;
+      width: 90%;
+      max-width: 880px;
+      background: white;
+      border-radius: 24px;
+      padding: 3.2rem 3.2rem;
+      box-shadow: 0 12px 45px rgba(123, 44, 191, 0.18);
+      border: 1px solid #e0c3ff;
+      text-align: center;
+    }
+
+    .details-container h2 {
+      margin: 0 0 1.6rem;
+      color: #7b2cbf;
+      font-size: 2.2rem;
+      border-bottom: 4px solid #c77dff;
+      padding-bottom: 0.9rem;
+    }
+
+    p.placeholder {
+      color: #4a3a5c;
+      line-height: 1.85;
+      font-size: 1.15rem;
+      margin: 1.2rem 0;
+    }
+
+    p.placeholder span.emoji {
+      font-size: 1.4rem;
+      margin: 0 0.5rem;
+    }
+
+    .extra-details {
+      margin: 1rem auto 3rem;
+      width: 90%;
+      max-width: 880px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      padding: 0 1rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.8rem 1.2rem;
+      text-align: center;
+      box-shadow: 0 6px 25px rgba(123, 44, 191, 0.12);
+      border: 1px solid #d4bbff;
+      transition: transform 0.25s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-number {
+      font-size: 3.2rem;
+      font-weight: 800;
+      color: #7b2cbf;
+      margin: 0 0 0.6rem;
+      line-height: 1;
+    }
+
+    .stat-desc {
+      font-size: 1.05rem;
+      color: #4a3a5c;
+      font-weight: 500;
+    }
+
+    .birthday-button {
+      margin: 2rem auto 4rem;
+      text-align: center;
+    }
+
+    button.wish-btn {
+      font-size: 1.45rem;
+      padding: 1.2rem 3.2rem;
+      background: linear-gradient(90deg, #9d4edd, #c77dff, #e0aaff);
+      color: white;
+      border: none;
+      border-radius: 60px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(123, 44, 191, 0.4);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      font-weight: 700;
+      background-size: 300% auto;
+    }
+
+    button.wish-btn:hover {
+      transform: translateY(-6px) scale(1.05);
+      box-shadow: 0 16px 45px rgba(123, 44, 191, 0.55);
+      background-position: right center;
+    }
+
+    button.wish-btn:active {
+      transform: translateY(-2px);
+    }
+
+
+    button.btn {
+  font-size: 1rem;              /* reduced from 1.45rem */
+  padding: 0.6rem 1.6rem;      /* reduced from 1.2rem 3.2rem */
+  background: linear-gradient(90deg, #9d4edd, #c77dff, #e0aaff);
+  color: white;
+  border: none;
+  border-radius: 30px;         /* slightly smaller */
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3); /* lighter */
+  transition: all 0.3s ease;
+  font-weight: 600;
+  background-size: 300% auto;
+}
+
+button.btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(123, 44, 191, 0.45);
+  background-position: right center;
+}
+
+button.btn:active {
+  transform: translateY(-1px);
+}
+
+button.danger {
+  font-size: 1rem;              /* reduced from 1.45rem */
+  padding: 0.6rem 1.6rem;      /* reduced from 1.2rem 3.2rem */
+  background: linear-gradient(90deg, #9d4edd, #c77dff, #e0aaff);
+  color: white;
+  border: none;
+  border-radius: 30px;         /* slightly smaller */
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3); /* lighter */
+  transition: all 0.3s ease;
+  font-weight: 600;
+  background-size: 300% auto;
+}
+
+button.danger:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(123, 44, 191, 0.45);
+  background-position: right center;
+}
+
+button.danger:active {
+  transform: translateY(-1px);
+}
+
+button.save {
+  font-size: 1rem;              /* reduced from 1.45rem */
+  padding: 0.6rem 1.6rem;      /* reduced from 1.2rem 3.2rem */
+  background: linear-gradient(90deg, #9d4edd, #c77dff, #e0aaff);
+  color: white;
+  border: none;
+  border-radius: 30px;         /* slightly smaller */
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3); /* lighter */
+  transition: all 0.3s ease;
+  font-weight: 600;
+  background-size: 300% auto;
+}
+
+button.save:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(123, 44, 191, 0.45);
+  background-position: right center;
+}
+
+button.save:active {
+  transform: translateY(-1px);
+}
+
+button.delete {
+  font-size: 1rem;              /* reduced from 1.45rem */
+  padding: 0.6rem 1.6rem;      /* reduced from 1.2rem 3.2rem */
+  background: linear-gradient(90deg, #9d4edd, #c77dff, #e0aaff);
+  color: white;
+  border: none;
+  border-radius: 30px;         /* slightly smaller */
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3); /* lighter */
+  transition: all 0.3s ease;
+  font-weight: 600;
+  background-size: 300% auto;
+}
+
+button.delete:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(123, 44, 191, 0.45);
+  background-position: right center;
+}
+
+button.delete:active {
+  transform: translateY(-1px);
+}
+
+
+select.btn {
+  font-size: 1rem;
+  padding: 0.8rem 2.2rem;   /* increased padding */
+  
+  width: 180px;            /* FIX: keeps overall size stable */
+  box-sizing: border-box;  /* IMPORTANT */
+
+  background: linear-gradient(90deg, #9d4edd, #c77dff, #e0aaff);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3);
+  transition: all 0.3s ease;
+  font-weight: 600;
+  background-size: 300% auto;
+}
+
+select.btn option {
+  background-color: #2b0a3d;  /* dark purple background */
+  color: #ffffff;             /* readable text */
+}
+
+select.btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(123, 44, 191, 0.45);
+  background-position: right center;
+}
+
+select.btn:active {
+  transform: translateY(-1px);
+}
+
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="date"] {
+      padding: 0.9rem 1.1rem;
+      border: 1px solid #c77dff;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      background: #fdfaff;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #7b2cbf;
+      box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.15);
+    }
+
+    
+
+.truncate {
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>
+</head>
+
+<body>
+
+<nav class="nav-bar">
+  <div class="nav-container">
+    <a href="/" class="nav-link">🏠 Home</a>
+    <a href="/data" class="nav-link">📋 Dashboard</a>
+    <a href="/upload" class="nav-link">📤 Upload</a>
+    <a href="/manage" class="nav-link active">⚙ Manage</a>
+  </div>
+</nav>
+
+<div class="details-container">
+
+<h2>Manage Records</h2>
+
+<div style="display:flex; gap:10px; margin-bottom:15px; align-items:center;">
+
+  <button class="danger" onclick="deleteAll()">Delete ALL</button>
+
+  <select class = "btn" id="searchType">
+    <option value="name">Name</option>
+    <option value="dob">DOB</option>
+    <option value="month">Month</option>
+  </select>
+
+  <input type="text" id="searchInput" placeholder="Search..." />
+
+  <button class="btn" onclick="searchData()">Search</button>
+
+</div>
+  <div class = "details-container"> 
+    <table id = "tableBody" style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone Number</th>
+            <th>Date of Birth</th>
+          </tr>
+        </thead>
+      </table>
+  </div>
+      
+<script>
+async function searchData() {
+  try {
+    const type = document.getElementById('searchType').value;
+    const value = document.getElementById('searchInput').value;
+
+    const res = await fetch(`/search?type=${type}&value=${value}`);
+
+    if (!res.ok) {
+      console.log("Server error");
+      return;
+    }
+
+    const data = await res.json();
+
+    const table = document.getElementById('tableBody');
+    table.innerHTML = '';
+
+    if (!data || data.length === 0) {
+      table.innerHTML = `<tr><td colspan="4">No results</td></tr>`;
+      return;
+    }
+
+    data.forEach(item => {
+      const row = document.createElement('tr');
+
+      row.innerHTML = `
+        <td contenteditable="true">${item.name}</td>
+        <td contenteditable="true">${item.phone}</td>
+        <td contenteditable="true">${item.dob}</td>
+        <td>
+          <button class="save" onclick="updateRow(this,'${item.table}',${item.id})">Save</button>
+          <button class="delete" onclick="deleteRow('${item.table}',${item.id})">Delete</button>
+        </td>
+      `;
+
+      table.appendChild(row);
+    });
+
+  } catch (err) {
+    console.error("Search failed:", err);
+  }
+}
+
+function deleteAll() {
+  if (!confirm("Delete ALL data?")) return;
+
+  fetch('/delete_all', { method: 'POST' })
+    .then(res => res.json())
+    .then(() => location.reload());
+}
+
+function deleteRow(table, id) {
+  fetch(`/delete/${table}/${id}`, { method: 'POST' })
+    .then(() => location.reload());
+}
+
+function updateRow(btn, table, id) {
+  const row = btn.parentElement.parentElement;
+  const cells = row.querySelectorAll('td');
+
+  const data = {
+    name: cells[0].innerText,
+    phone: cells[1].innerText,
+    dob: cells[2].innerText
+  };
+
+  fetch(`/edit/${table}/${id}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(() => alert("Updated"));
+}
+
+</script>
+
+</body>
+</html>
