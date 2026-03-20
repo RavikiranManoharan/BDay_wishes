@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Birthday Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #f5f0ff 0%, #f0e6ff 50%, #e6e0ff 100%);
+      color: #2d1a4a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .nav-bar {
+      width: 100%;
+      background: rgba(245, 240, 255, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 1rem 0;
+      box-shadow: 0 4px 20px rgba(123, 44, 191, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(199, 125, 255, 0.15);
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      gap: 1.8rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.85rem 1.8rem;
+      background: rgba(255, 255, 255, 0.35);
+      color: #4a3a5c;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(199, 125, 255, 0.25);
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.6);
+      color: #7b2cbf;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(123, 44, 191, 0.15);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(90deg, #9d4edd, #c77dff);
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 4px 18px rgba(123, 44, 191, 0.3);
+      border: none;
+    }
+
+    .content-container {
+      width: 92%;
+      max-width: 1100px;
+      margin: 2.5rem auto 4rem;
+    }
+
+    .table-section, .form-section {
+      background: white;
+      border-radius: 20px;
+      padding: 2.2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 10px 40px rgba(123, 44, 191, 0.16);
+      border: 1px solid #e0c3ff;
+    }
+
+    h2 {
+      color: #7b2cbf;
+      margin: 0 0 1.6rem;
+      font-size: 1.9rem;
+      border-bottom: 3px solid #c77dff;
+      padding-bottom: 0.6rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1.05rem;
+    }
+
+    th, td {
+      padding: 1rem 1.2rem;
+      text-align: left;
+      border-bottom: 1px solid #e9d5ff;
+    }
+
+    th {
+      background: #f3e8ff;
+      color: #6a1b9a;
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background: #faf5ff;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 1.2rem;
+      align-items: end;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="date"] {
+      padding: 0.9rem 1.1rem;
+      border: 1px solid #c77dff;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      background: #fdfaff;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #7b2cbf;
+      box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.15);
+    }
+
+    button {
+      padding: 0.95rem 2.2rem;
+      background: linear-gradient(90deg, #9d4edd, #c77dff);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(123, 44, 191, 0.45);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #status {
+      margin-top: 1.2rem;
+      font-weight: 500;
+      min-height: 1.4em;
+    }
+
+    .success { color: #2e7d32; }
+    .error   { color: #c62828; }
+
+    .truncate {
+      max-width: 120px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav-bar">
+    <div class="nav-container">
+      <a href="/" class="nav-link">🏠 Home</a>
+      <a href="/data" class="nav-link active">📋 Dashboard</a>
+      <a href="/upload" class="nav-link">📤 Upload Excel</a>
+      <a href="/manage" class="nav-link">⚙ Manage</a>
+    </div>
+  </nav>
+
+  <div class="table-section">
+  <h2>Existing Birthday Records</h2>
+
+  <table id="recordsTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Phone Number</th>
+        <th>Date of Birth</th>
+      </tr>
+    </thead>
+
+    <tbody>
+    {% if data %}
+      {% for item in data %}
+      <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.phone }}</td>
+        <td>{{ item.dob }}</td>
+      </tr>
+      {% endfor %}
+    {% else %}
+      <tr>
+        <td colspan="4" style="text-align:center;">No records found</td>
+      </tr>
+    {% endif %}
+    </tbody>
+  </table>
+</div>
+
+    <div class="form-section">
+      <h2>Add New Birthday Entry</h2>
+      <div class="form-grid">
+        <div>
+          <label for="name">Name</label><br>
+          <input type="text" id="name" placeholder="Full name" required>
+        </div>
+        <div>
+          <label for="phone">Phone Number</label><br>
+          <input type="tel" id="phone" placeholder="+91xxxxxxxxxx" required>
+        </div>
+        <div>
+          <label for="dob">Date of Birth</label><br>
+          <input type="text" id="dob" required>
+        </div>
+        <div>
+          <button id="addBtn">Add Record</button>
+        </div>
+      </div>
+      <div id="status"></div>
+    </div>
+
+  </div>
+
+  <script>
+const statusDiv = document.getElementById('status');
+const addBtn = document.getElementById('addBtn');
+
+addBtn.addEventListener('click', async () => {
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const dob = document.getElementById('dob').value;
+
+  if (!name || !phone || !dob) {
+    statusDiv.textContent = 'Please fill all fields';
+    statusDiv.className = 'error';
+    return;
+  }
+
+  statusDiv.textContent = 'Adding...';
+  statusDiv.className = '';
+  addBtn.disabled = true;
+
+  try {
+    const res = await fetch('/data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone, dob })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to add');
+    }
+
+    statusDiv.textContent = 'Record added successfully!';
+    statusDiv.className = 'success';
+
+    // clear inputs
+    document.getElementById('name').value = '';
+    document.getElementById('phone').value = '';
+    document.getElementById('dob').value = '';
+
+    // 🔥 reload page instead of loadRecords()
+    location.reload();
+
+  } catch (err) {
+    statusDiv.textContent = 'Error: ' + err.message;
+    console.log(err.message);
+    statusDiv.className = 'error';
+  } finally {
+    addBtn.disabled = false;
+  }
+});
+</script>
+
+</body>
+</html>
